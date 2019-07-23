@@ -1,20 +1,20 @@
 import telebot
 import requests
-import html
+import html2text
 
 bot = telebot.TeleBot('926676977:AAEXr4VQxLIaGfA1pBOdtSL0aB70iWlfX8Y')
 
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, 'Hello i am an Wikipedia bot, you can ask me for anything you want, type a word')
+    bot.send_message(message.chat.id, 'Hello i am an Wikipedia bot, you can ask me for anything you want, type a word...')
 
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     title = message.text.lower()
-    article = find_article_in_wiki(title)
-    bot.send_message(message.chat.id, article)
+    msg = find_article_in_wiki(title)
+    bot.send_message(message.chat.id, msg[:3000] + '\n\n' + 'see more in wikipedia.org')
 
 
 def find_article_in_wiki(title):
@@ -28,11 +28,9 @@ def find_article_in_wiki(title):
     a = (tmp['pages'])
     for key in a:
         t = a[key]
-        a = (t['extract'])
+        html = (t['extract'])
 
-        print(html.unescape(a))
-
-        return a.split('</p>')[1]
+        return html2text.html2text(html)
 
 
 bot.polling()
